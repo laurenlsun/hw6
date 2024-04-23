@@ -82,9 +82,9 @@ std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<s
 	{
 		for(unsigned int j=0;j<board.size();j++)
 		{
-			boggleHelper(dict, prefix, board, "", result, i, j, 0, 1);
-			boggleHelper(dict, prefix, board, "", result, i, j, 1, 0);
-			boggleHelper(dict, prefix, board, "", result, i, j, 1, 1);
+			boggleHelper(dict, prefix, board, "", result, i, j, 0, 1); // move right
+			boggleHelper(dict, prefix, board, "", result, i, j, 1, 0); // move down
+			boggleHelper(dict, prefix, board, "", result, i, j, 1, 1); // move down and right
 		}
 	}
 	
@@ -94,6 +94,30 @@ std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<s
 bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>& prefix, const std::vector<std::vector<char> >& board, 
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
-//add your solution here!
+	//add your solution here!
+
+	// index out of range
+	if (r==board.size())
+		return false; // no more words found down here
+	if (c==board[0].size()) 
+		return false;
+	
+
+	word += board[r][c]; // append letter
+
+	// if adding this new letter does make a word
+	if (dict.find(word)!=dict.end()) { 
+		if ((prefix.find(word)==prefix.end()) || 
+			(boggleHelper(dict, prefix, board, word, result, r+dr, c+dc, dr, dc)==false)) {
+			// is a valid word and not prefix or couldn't find anything better
+			// nothing else down the line could possibly be better
+			result.insert(word);
+			// return true;
+		}
+		// else no need to insert because word IS a prefix AND word was found later
+		return true;
+	}
+	// else: adding this letter doesn't make a word. check next
+	return boggleHelper(dict, prefix, board, word, result, r+dr, c+dc, dr, dc);
 
 }
