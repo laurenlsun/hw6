@@ -322,7 +322,7 @@ bool HashTable<K,V,Prober,Hash,KEqual>::empty() const
 {
     for (HASH_INDEX_T i = 0; i < this->table_.size(); i++) {
         if (this->table_[i]!=nullptr) { // there is something there
-            if (this->table_[i]->item->deleted==false) // not deleted
+            if (this->table_[i]->deleted==false) // not deleted
                 return false;
         }
     }
@@ -350,7 +350,7 @@ void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
 
     // if no space found, return
     if(npos == h)
-        return;
+        throw std::logic_error("No location available to insert");
     
     if(table_[h]!=nullptr) {
         table_[h]->item = p;
@@ -461,12 +461,15 @@ void HashTable<K,V,Prober,Hash,KEqual>::resize()
     insertedItems = 0;
     removedItems = 0;
     std::vector<HashItem*> oldTable = table_;
-    for(int i=0; i< this->table_.size(); i++) {
+    for(int i=0; i< table_.size(); i++) {
         table_[i] = nullptr;
     }
-    for (int i=0; i< (CAPACITIES[mIndex_]-table_.size());i++) {
+
+    // std::cout << "table size before pushing null: " << table_.size() << std::endl;
+    for (int i=0; i< (CAPACITIES[mIndex_] - oldTable.size());i++) {
         table_.push_back(nullptr);
     }
+    // std::cout << "table size after pushing null: " << table_.size() << std::endl;
     for (int i=0; i<oldTable.size(); i++) {
         if (oldTable[i]!=nullptr) {
             if (oldTable[i]->deleted==false) {

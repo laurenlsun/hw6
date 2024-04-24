@@ -27,6 +27,10 @@ struct MyStringHash {
         int idx = k.length()-1;
         unsigned long long *w = new unsigned long long[5];
         unsigned long long sum, baseval;
+        for (int i=0; i< 5; i++) {
+            w[i] = 0;
+        }
+        
         for (int i=4; i> 5-numBlocks; i--) { // in array, start at last index
             std::cout << "filling w at index " << i << std::endl;
             baseval=1; // start at 36^0
@@ -60,6 +64,7 @@ struct MyStringHash {
         for (int i=4; i>=0; i--) {
             result+= w[i]*rValues[i];
         }
+        delete [] w;
         return result;
     }
 
